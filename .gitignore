@@ -23,6 +23,11 @@ tcl8.4.18/
 share/
 ns-2.34/indep-utils/
 tk8.4.18/
+ns-2.34/common/ptypes2tcl
+ns-2.34/gen/
+ns-2.34/ns
+ns-2.34/nse
+ns-2.34/nstk
 
 install
 INSTALL.WIN32
