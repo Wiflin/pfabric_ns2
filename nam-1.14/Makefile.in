@@ -43,7 +43,7 @@ MANDEST = @mandir@
 
 CC = @CC@
 CPP = @CXX@
-CCOPT = @V_CCOPT@
+CCOPT = @V_CCOPT@ -funsigned-char
 MKDEP = ./conf/mkdep
 # Have to be the same as that defined in conf/makefile.win
 TCL2C = @V_TCL2CPP@
