@@ -8,7 +8,7 @@
 
 bin/
 cweb/
-tcl/
+ns-2.34/tcl/test/
 gt-itm/
 nam-1.14/
 sgb/
