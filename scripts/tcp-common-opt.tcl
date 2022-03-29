@@ -739,7 +739,7 @@ Agent_Aggr_pair instproc fin_notify { pid bytes fldur bps rttimes } {
         set tmp_pkts [expr $bytes / $pktSize]
         set t_start $apair($pid)::start_time
 	#puts $logfile "$tmp_pkts $fldur $rttimes"
-	    puts $logfile "$group_id - - $bytes $t_start [expr $fldur*1000000000] - $rttimes "
+	    puts $logfile "$group_id - - $bytes $t_start [expr ceil($fldur*1000000000)] - $rttimes "
 	#flush stdout
     }
     set flow_fin [expr $flow_fin + 1]
