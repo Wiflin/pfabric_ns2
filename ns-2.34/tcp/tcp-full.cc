@@ -822,7 +822,7 @@ FullTcpAgent::ack_action(Packet* p)
 
 int
 FullTcpAgent::set_prio(int seq, int maxseq) {
-	int max = 100 * 1460;
+	int max = 100 * size_;
 	int prio;
 	if (prio_scheme_ == 0) {
 		if ( seq - startseq_ > max)
@@ -831,11 +831,11 @@ FullTcpAgent::set_prio(int seq, int maxseq) {
 			prio = seq - startseq_;
 	}
 	if (prio_scheme_ == 1)
-		prio =  maxseq - startseq_;
+		prio =  maxseq - startseq_;		// static priority
 	if (prio_scheme_ == 2)
-		prio =  maxseq - seq;
+		prio =  maxseq - seq;			// linear priority based on remaining 
 	if (prio_scheme_ == 3)
-		prio = seq - startseq_;
+		prio = seq - startseq_;			// linear priority based on already sent 
 
 	if (prio_num_ == 0)
 		return prio;
@@ -983,7 +983,7 @@ FullTcpAgent::sendpacket(int seqno, int ackno, int pflags, int datalen, int reas
 				iph->prio_type() = 0;
 				iph->prio() = (1 << 30);
 			} else {
-//				iph->prio() = iph->prio() / 40 * 1000 + set_prio(seqno, curseq_) / 1460;
+//				iph->prio() = iph->prio() / 40 * 1000 + set_prio(seqno, curseq_) / size_;
 			}
 		}
 
@@ -3192,7 +3192,7 @@ NewRenoFullTcpAgent::ack_action(Packet* p)
 
 int
 SackFullTcpAgent::set_prio(int seq, int maxseq) {
-	int max = 100 * 1460;
+	int max = 100 * size_;
 	int prio;
 	if (prio_scheme_ == 0) {
 		if ( seq - startseq_ > max)
@@ -3390,9 +3390,9 @@ SackFullTcpAgent::timeout_action()
 	/*recover_ = maxseq_;
 
 	int progress = curseq_ - int(highest_ack_) - sq_.total();
-	cwnd_ = min((last_timeout_progress_ - progress) / 1460 + 1, maxcwnd_);
+	cwnd_ = min((last_timeout_progress_ - progress) / size_ + 1, maxcwnd_);
 	ssthresh_ = cwnd_;
-	printf("%d %d", progress/1460, last_timeout_progress_ / 1460);
+	printf("%d %d", progress/size_, last_timeout_progress_ / size_);
 	last_timeout_progress_ = progress;
 
 	reset_rtx_timer(1);

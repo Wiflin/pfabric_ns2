@@ -117,6 +117,8 @@ foreach (@load) {
 			    $cur_slowstartrestart = $_;
 			    foreach(@min_rto) {
 				$cur_rto = $_;
+
+				# load topology_spt:16 perflowMP:0 queueSize:13 sourceAlg:DCTCP-Sack ackratio:1 slowstartrestart:true min_rto:0.000024(24us,3RTT) DCTCP_K:10000 drop_prio_:true drop_prio_:5 prob_mode_:5 keep_order_:true
 				for ($i = 0; $i < @DCTCP_K; $i++) {
 				    $cur_DCTCP_K = $DCTCP_K[$i];
 				    foreach($dp = 0; $dp < @drop_prio_; $dp++)  {

@@ -10,15 +10,20 @@ puts "Date: [clock format [clock seconds]]"
 set sim_start [clock seconds]
 puts "Host: [exec uname -a]"
 
-if {$argc != 27} {
+if {$argc != 29} {
     puts "wrong number of arguments $argc"
     exit 0
 }
 
+# set sim_end [lindex $argv 0]
+# set link_rate [lindex $argv 1]
+# set mean_link_delay [lindex $argv 2]
+set logbase "./"
+
 set sim_end [lindex $argv 0]
 set link_rate [lindex $argv 1]
 set mean_link_delay [lindex $argv 2]
-set host_delay [lindex $argv 3]
+set host_delay [lindex $argv 3]; # unused,
 set queueSize [lindex $argv 4]
 set load [lindex $argv 5]
 set connections_per_pair [lindex $argv 6]
@@ -49,6 +54,10 @@ set topology_x [lindex $argv 25]
 #### NAM
 set enableNAM [lindex $argv 26]
 
+#### INPUT and OUTPUT
+set logbase [lindex $argv 27]
+set flowtrace [lindex $argv 28]
+
 #### Packet size is in bytes.
 # set pktSize 1460
 set pktSize 1000
@@ -61,8 +70,7 @@ puts "topology: spines server per rack = $topology_spt, x = $topology_x"
 puts "sim_end $sim_end"
 puts "link_rate $link_rate Gbps"
 puts "link_delay $mean_link_delay sec"
-puts "RTT  [expr $mean_link_delay * 2.0 * 6] sec"
-puts "host_delay $host_delay sec"
+puts "RTT  [expr $mean_link_delay * 2 * 4] sec"
 puts "queue size $queueSize pkts"
 puts "load $load"
 puts "connections_per_pair $connections_per_pair"
@@ -203,8 +211,8 @@ for {set i 0} {$i < $topology_spines} {incr i} {
 for {set i 0} {$i < $S} {incr i} {
     set j [expr $i/$topology_spt]
     #set tmpr [expr $link_rate * 1.1]
-    $ns simplex-link $s($i) $n($j) [set link_rate]Gb [expr 2*$host_delay + $mean_link_delay] $switchAlg
-    $ns simplex-link $n($j) $s($i) [set link_rate]Gb [expr $host_delay] $switchAlg
+    $ns simplex-link $s($i) $n($j) [set link_rate]Gb [expr $mean_link_delay] $switchAlg
+    $ns simplex-link $n($j) $s($i) [set link_rate]Gb [expr $mean_link_delay] $switchAlg
     #if {$i == 0} {
     #    set flowmon [$ns makeflowmon Fid]
     #    $ns attach-fmon [$ns link $n($j) $s($i)] $flowmon
@@ -213,8 +221,8 @@ for {set i 0} {$i < $S} {incr i} {
     #$ns queue-limit $s($i) $n($j) 10000
 
     $ns duplex-link-op $s($i) $n($j) queuePos -0.5
-    set qfile(s$i,n$j) [$ns monitor-queue $s($i) $n($j) [open queue_s$i\_n$j.tr w] $queueSamplingInterval]
-    set qfile(n$j,s$i) [$ns monitor-queue $n($j) $s($i) [open queue_n$j\_s$i.tr w] $queueSamplingInterval]
+    # set qfile(s$i,n$j) [$ns monitor-queue $s($i) $n($j) [open queue_s$i\_n$j.tr w] $queueSamplingInterval]
+    # set qfile(n$j,s$i) [$ns monitor-queue $n($j) $s($i) [open queue_n$j\_s$i.tr w] $queueSamplingInterval]
 
 }
 
@@ -222,13 +230,14 @@ for {set i 0} {$i < $topology_tors} {incr i} {
     for {set j 0} {$j < $topology_spines} {incr j} {
 	$ns duplex-link $n($i) $a($j) [set UCap]Gb $mean_link_delay $switchAlg
 	$ns duplex-link-op $n($i) $a($j) queuePos 0.25
-    	set qfile(n$i,a$j) [$ns monitor-queue $n($i) $a($j) [open queue_n$i\_a$j.tr w] $queueSamplingInterval]
-    	set qfile(a$j,n$i) [$ns monitor-queue $a($j) $n($i) [open queue_a$j\_n$i.tr w] $queueSamplingInterval]
+    # monitor queue here --
+    	# set qfile(n$i,a$j) [$ns monitor-queue $n($i) $a($j) [open queue_n$i\_a$j.tr w] $queueSamplingInterval]
+    	# set qfile(a$j,n$i) [$ns monitor-queue $a($j) $n($i) [open queue_a$j\_n$i.tr w] $queueSamplingInterval]
     }
 }
 
 #############  Agents          #########################
-set lambda [expr ($link_rate*$load*1000000000)/($meanFlowSize*8.0/2547262*2686844)]
+set lambda [expr ($link_rate*$load*1000000000)/($meanFlowSize*8.0/2547262*2686844)] ; # 1/2547262*2686844 = 1.05 
 puts "Arrival: Poisson with inter-arrival [expr 1/$lambda * 1000] ms"
 puts "FlowSize: Web Search (DCTCP) with mean = $meanFlowSize"
 
@@ -248,29 +257,32 @@ proc printNumActive {} {
     }
 }
 
-set flowlog [open flow.tr w]
+
+set flowlog [open "${logbase}fct.log" w]
 set init_fid 0
 set tbf 0
 for {set j 0} {$j < $S } {incr j} {
     for {set i 0} {$i < $S } {incr i} {
 	if {$i != $j} {
 	    set agtagr($i,$j) [new Agent_Aggr_pair]
-	    $agtagr($i,$j) setup $s($i) $s($j) [array get tbf] 0 "$i $j" $connections_per_pair $init_fid "TCP_pair"
+	    $agtagr($i,$j) setup $s($i) $s($j) [array get tbf] 0 "$i $j" 0 $init_fid "TCP_pair" ; # tcp-common-opt.tcl
 	    $agtagr($i,$j) attach-logfile $flowlog
 
-	    puts -nonewline "($i,$j) "
+	    # puts -nonewline "($i,$j) "
 
-	    $agtagr($i,$j) set_PCarrival_process  [expr $lambda/($S - 1)] "CDF_search.tcl" [expr 17*$i+1244*$j] [expr 33*$i+4369*$j]
+	    # $agtagr($i,$j) set_PCarrival_process  [expr $lambda/($S - 1)] "CDF_search.tcl" [expr 17*$i+1244*$j] [expr 33*$i+4369*$j]
 
-	    $ns at 0.1 "$agtagr($i,$j) warmup 0.5 5"
-	    $ns at 1 "$agtagr($i,$j) init_schedule"
+	    $ns at 0.1 "$agtagr($i,$j) warmup 0.5 5" ; # warmup tcp pair by 5 packets
+	    # $ns at 1 "$agtagr($i,$j) init_schedule"
 
-	    set init_fid [expr $init_fid + $connections_per_pair];
+	    # set init_fid [expr $init_fid + $connections_per_pair];
 	}
     }
 }
 
-$ns at 1 "printNumActive"
+generate_flow_from_file $flowtrace
+
+$ns at 2 "printNumActive"
 puts "Initial agent creation done";flush stdout
 puts "Simulation started!"
 

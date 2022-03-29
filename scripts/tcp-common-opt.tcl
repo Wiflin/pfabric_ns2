@@ -281,7 +281,7 @@ TCP_pair instproc flow_finished {} {
 
     set ct [$ns now]
     #Shuang commenting these
-    $self set dt  [expr $ct - $start_time]
+    $self set dt  [expr ($ct - $start_time) ] ; # ns
     if { $dt == 0 } {
 		puts "dt = 0"
 		flush stdout
@@ -289,7 +289,7 @@ TCP_pair instproc flow_finished {} {
     $self set bps [expr $bytes * 8.0 / $dt ]
 
     if { $debug_mode == 1 } {
-	puts "stats: $ct fin grp $group_id fid $id fldur $dt sec $bps bps"
+	puts "stats: $ct fin grp $group_id fid $id fldur [expr $dt*1000000000] nanosec $bps bps"
     }
 }
 
@@ -382,12 +382,14 @@ Agent_Aggr_pair instproc setup {snode dnode tbflist tbfindex gid nr init_fid age
     $self instvar group_id  ;# group id of this group (given)
     $self instvar nr_pairs  ;# nr of pairs in this group (given)
     $self instvar s_node d_node apair_type ;
+    $self instvar idle_pairs;
 
     $self set group_id $gid
     $self set nr_pairs $nr
     $self set s_node $snode
     $self set d_node $dnode
     $self set apair_type $agent_pair_type
+    $self set idle_pairs [list ]
 
     array set tbf $tbflist
 
@@ -403,6 +405,7 @@ Agent_Aggr_pair instproc setup {snode dnode tbflist tbfindex gid nr init_fid age
 	    puts "installing tbf $tbfindex for gid $group_id fid $init_fid"
 	    $apair($i) settbf $tbf($snode,$tbfindex) ;#FIXME: needs to assign proper tbf
 	}
+    lappend $idle_pairs $apair($i)
 	incr init_fid
     }
     $self resetvars                  ;# other initialization
@@ -667,7 +670,7 @@ Agent_Aggr_pair instproc schedule { pid } {
 
     set tmp_ [expr ceil ([$rv_nbytes value])]
     set tmp_ [expr $tmp_]
-    $ns at $tnext "$apair($pid) start $tmp_"
+    $ns at $tnext "$apair($pid) start $tmp_" ; # primary start a flow
 
     set dt [$rv_flow_intval value]
     $self set tnext [expr $tnext + $dt]
@@ -731,20 +734,21 @@ Agent_Aggr_pair instproc fin_notify { pid bytes fldur bps rttimes } {
 
     ###### OUPUT STATISTICS #################
     if { [info exists logfile] } {
+        global pktSize
         #puts $logfile "flow_stats: [$ns now] gid $group_id pid $pid fid $fin_fid bytes $bytes fldur $fldur actfl $actfl bps $bps"
-        set tmp_pkts [expr $bytes / 1460]
-
+        set tmp_pkts [expr $bytes / $pktSize]
+        set t_start $apair($pid)::start_time
 	#puts $logfile "$tmp_pkts $fldur $rttimes"
-	#puts $logfile "$bytes $fldur $rttimes $group_id"
+	    puts $logfile "$group_id - - $bytes $t_start [expr $fldur*1000000000] - $rttimes "
 	#flush stdout
     }
     set flow_fin [expr $flow_fin + 1]
     if {$flow_fin >= $sim_end} {
 	finish
     }
-    if {$flow_gen < $sim_end} {
-    $self schedule $pid ;# re-schedule a pair having pair_id $pid.
-    }
+    # if {$flow_gen < $sim_end} {
+    # $self schedule $pid ;# re-schedule a pair having pair_id $pid.
+    # }
 }
 
 Agent_Aggr_pair instproc fin_recv { pid bytes fldur bps rttimes } {
@@ -758,13 +762,14 @@ Agent_Aggr_pair instproc fin_recv { pid bytes fldur bps rttimes } {
     $self instvar group_id
 
     ###### OUPUT STATISTICS #################
-    if { [info exists logfile] } {
-        set tmp_pkts [expr $bytes / 1460]
+    # if { [info exists logfile] } {
+    #     global pktSize
+    #     set tmp_pkts [expr $bytes / $pktSize]
 
-        #puts $logfile "$tmp_pkts $fldur $rttimes"
-        puts $logfile "$bytes $fldur $rttimes $group_id"
-        flush stdout
-    }
+    #     #puts $logfile "$tmp_pkts $fldur $rttimes"
+    #     puts $logfile "$bytes $fldur $rttimes $group_id"
+    #     flush stdout
+    # }
 }
 
 
@@ -780,6 +785,32 @@ Agent_Aggr_pair instproc start_notify {} {
     $self instvar actfl;
     incr actfl;
 }
+
+
+Agent_Aggr_pair instproc add_message {size t_start} {
+    $self instvar apair
+    $self instvar nr_pairs 
+    $self instvar group_id
+    $self instvar s_node d_node apair_type ;
+    set i $nr_pairs
+
+    $self set apair($i) [new $apair_type]
+	$apair($i) setup $s_node $d_node
+	$apair($i) setgid $group_id  ;# let each pair know our group id
+	$apair($i) setpairid $i      ;# let each pair know his pair id
+	# $apair($nr_pairs) setfid $init_fid  ;# Mohammad: assign next fid
+
+    #### Callback Setting ########################
+	$apair($i) set_fincallback $self fin_notify fin_recv
+	$apair($i) set_startcallback $self start_notify
+	###############################################
+	incr nr_pairs
+
+    global ns
+    $ns at $t_start "$apair($i) start $size"
+
+}
+
 proc finish {} {
     global ns flowlog
     global sim_start
@@ -802,3 +833,35 @@ proc finish {} {
 }
 
 
+proc generate_flow_from_file { input_file } {
+    global agtagr
+    global sim_end
+
+    set fp [open $input_file r]
+    set first [gets $fp ]
+    set flow_num [expr $first]
+    set sim_end $flow_num
+    puts "flow inputs: $flow_num" 
+
+    set flow_idx 0
+    while {$flow_idx < $flow_num} { 
+        set line [gets $fp];
+        if {[eof $fp]} {
+            close $fp;
+            break;
+        }
+
+        regsub -all {[[:blank:]]+} $line " " line
+        set line_raw  [split $line ];
+
+        set src [expr [lindex $line_raw 0]]
+        set dst [expr [lindex $line_raw 1]]
+        set size [expr [lindex $line_raw 4]]
+        set t_start [expr [lindex $line_raw 5]]
+        puts "$src .. $dst .. $size .. $t_start"
+
+        $agtagr($src,$dst) add_message $size $t_start
+
+        incr flow_idx
+    }
+}

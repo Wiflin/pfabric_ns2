@@ -1,4 +1,5 @@
 **/*.txt
+*.log
 analysis/
 !analysis/workerSpecsFile
 !analysis/ns2FlowTraces
