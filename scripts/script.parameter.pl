@@ -57,3 +57,5 @@ $cur_topology_x 1
 $enableNAM 0
 $logbase "/.../.."
 $flowtrace "/...."
+
+../ns-2.34/ns empirical_pfabric.tcl  50000 10  0.000001 0.0000005 300 0.1 10 2547700 1 0 DCTCP-Sack 1 true 0.0625 0.000024 DropTail 10000 true 2 true 5 true 16 9 4 1 0 ./ ./flow_c1.txt
