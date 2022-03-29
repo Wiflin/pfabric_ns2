@@ -1,0 +1,16 @@
+configure
+aclocal.m4
+Makefile
+autoconf.h
+config.cache
+config.log
+config.status
+stamp-h
+compile
+depcomp
+stamp-h1
+xgraph
+*.in
+configure
+autom4te.cache/
+.deps/

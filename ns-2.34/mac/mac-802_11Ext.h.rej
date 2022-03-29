@@ -1,0 +1,10 @@
+--- ns-2.34/mac/mac-802_11Ext.h	2009-06-15 01:35:44.000000000 +0800
++++ ns-2.34/mac/mac-802_11Ext.h	2018-02-23 10:58:49.466167764 +0800
+@@ -62,6 +62,7 @@
+ #define GET_ETHER_TYPE(x)		GET2BYTE((x))
+ #define SET_ETHER_TYPE(x,y)            {u_int16_t t = (y); STORE2BYTE(x,&t);}
+ #include "wireless-phyExt.h"
++#include <stddef.h>
+ 
+ /* ======================================================================
+  Frame Formats
