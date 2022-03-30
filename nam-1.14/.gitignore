@@ -5,3 +5,4 @@ config.status
 gen/nam_tcl.cc
 gen/version.c
 nam
+!bin

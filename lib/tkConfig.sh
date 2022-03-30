@@ -32,15 +32,15 @@ TK_DBGX=
 TK_LIB_FILE='libtk8.4${TK_DBGX}.a'
 
 # Additional libraries to use when linking Tk.
-TK_LIBS='-lX11 -ldl  -lm'
+TK_LIBS='-lX11 -ldl  -lieee -lm'
 
 # Top-level directory in which Tk's platform-independent files are
 # installed.
-TK_PREFIX='/home/wiflin/Sirius/pfabric'
+TK_PREFIX='/home/ubuntu/pfabric_ns2'
 
 # Top-level directory in which Tk's platform-specific files (e.g.
 # executables) are installed.
-TK_EXEC_PREFIX='/home/wiflin/Sirius/pfabric'
+TK_EXEC_PREFIX='/home/ubuntu/pfabric_ns2'
 
 # -I switch(es) to use to make all of the X11 include files accessible:
 TK_XINCLUDES=''
@@ -53,15 +53,15 @@ TK_LIB_FLAG='-ltk8.4'
 
 # String to pass to linker to pick up the Tk library from its
 # build directory.
-TK_BUILD_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/tk8.4.18/unix -ltk8.4'
+TK_BUILD_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/tk8.4.18/unix -ltk8.4'
 
 # String to pass to linker to pick up the Tk library from its
 # installed directory.
-TK_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/lib -ltk8.4'
+TK_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/lib -ltk8.4'
 
 # String to pass to the compiler so that an extension can
 # find installed Tk headers.
-TK_INCLUDE_SPEC='-I/home/wiflin/Sirius/pfabric/include'
+TK_INCLUDE_SPEC='-I/home/ubuntu/pfabric_ns2/include'
 
 # Location of the top-level source directory from which Tk was built.
 # This is the directory that contains a README file as well as
@@ -69,7 +69,7 @@ TK_INCLUDE_SPEC='-I/home/wiflin/Sirius/pfabric/include'
 # different place than the directory containing the source files, this
 # points to the location of the sources, not the location where Tk was
 # compiled.
-TK_SRC_DIR='/home/wiflin/Sirius/pfabric/tk8.4.18'
+TK_SRC_DIR='/home/ubuntu/pfabric_ns2/tk8.4.18'
 
 # Needed if you want to make a 'fat' shared library library
 # containing tk objects or link a different wish.
@@ -84,14 +84,14 @@ TK_STUB_LIB_FLAG='-ltkstub8.4'
 
 # String to pass to linker to pick up the Tk stub library from its
 # build directory.
-TK_BUILD_STUB_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/tk8.4.18/unix -ltkstub8.4'
+TK_BUILD_STUB_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/tk8.4.18/unix -ltkstub8.4'
 
 # String to pass to linker to pick up the Tk stub library from its
 # installed directory.
-TK_STUB_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/lib -ltkstub8.4'
+TK_STUB_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/lib -ltkstub8.4'
 
 # Path to the Tk stub library in the build directory.
-TK_BUILD_STUB_LIB_PATH='/home/wiflin/Sirius/pfabric/tk8.4.18/unix/libtkstub8.4.a'
+TK_BUILD_STUB_LIB_PATH='/home/ubuntu/pfabric_ns2/tk8.4.18/unix/libtkstub8.4.a'
 
 # Path to the Tk stub library in the install directory.
-TK_STUB_LIB_PATH='/home/wiflin/Sirius/pfabric/lib/libtkstub8.4.a'
+TK_STUB_LIB_PATH='/home/ubuntu/pfabric_ns2/lib/libtkstub8.4.a'

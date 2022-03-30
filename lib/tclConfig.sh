@@ -21,7 +21,7 @@ TCL_PATCH_LEVEL='.18'
 TCL_CC='gcc'
 
 # -D flags for use with the C compiler.
-TCL_DEFS='-DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_LIMITS_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_PARAM_H=1 -DSTATIC_BUILD=1 -DPEEK_XCLOSEIM=1 -D_LARGEFILE64_SOURCE=1 -DTCL_WIDE_INT_IS_LONG=1 -DHAVE_GETCWD=1 -DHAVE_OPENDIR=1 -DHAVE_STRSTR=1 -DHAVE_STRTOL=1 -DHAVE_STRTOLL=1 -DHAVE_STRTOULL=1 -DHAVE_TMPNAM=1 -DHAVE_WAITPID=1 -DUSE_TERMIOS=1 -DHAVE_SYS_TIME_H=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_STRUCT_TM_TM_ZONE=1 -DHAVE_TM_ZONE=1 -DHAVE_GMTIME_R=1 -DHAVE_LOCALTIME_R=1 -DHAVE_TM_GMTOFF=1 -DHAVE_TIMEZONE_VAR=1 -DHAVE_STRUCT_STAT_ST_BLKSIZE=1 -DHAVE_ST_BLKSIZE=1 -DNO_UNION_WAIT=1 -DHAVE_SIGNED_CHAR=1 -DHAVE_LANGINFO=1 -DHAVE_FTS=1 -DHAVE_SYS_IOCTL_H=1'
+TCL_DEFS='-DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_LIMITS_H=1 -DHAVE_UNISTD_H=1 -DHAVE_SYS_PARAM_H=1 -DSTATIC_BUILD=1 -DPEEK_XCLOSEIM=1 -D_LARGEFILE64_SOURCE=1 -DTCL_WIDE_INT_IS_LONG=1 -DHAVE_GETCWD=1 -DHAVE_OPENDIR=1 -DHAVE_STRSTR=1 -DHAVE_STRTOL=1 -DHAVE_STRTOLL=1 -DHAVE_STRTOULL=1 -DHAVE_TMPNAM=1 -DHAVE_WAITPID=1 -DUSE_TERMIOS=1 -DHAVE_SYS_TIME_H=1 -DTIME_WITH_SYS_TIME=1 -DHAVE_STRUCT_TM_TM_ZONE=1 -DHAVE_TM_ZONE=1 -DHAVE_GMTIME_R=1 -DHAVE_LOCALTIME_R=1 -DHAVE_TM_GMTOFF=1 -DHAVE_TIMEZONE_VAR=1 -DHAVE_STRUCT_STAT_ST_BLKSIZE=1 -DHAVE_ST_BLKSIZE=1 -DHAVE_SIGNED_CHAR=1 -DHAVE_LANGINFO=1 -DHAVE_FTS=1 -DHAVE_SYS_IOCTL_H=1'
 
 # If TCL was built with debugging symbols, generated libraries contain
 # this string at the end of the library name (before the extension).
@@ -51,15 +51,15 @@ TCL_NEEDS_EXP_FILE=0
 TCL_EXPORT_FILE_SUFFIX=''
 
 # Additional libraries to use when linking Tcl.
-TCL_LIBS='-ldl  -lm'
+TCL_LIBS='-ldl  -lieee -lm'
 
 # Top-level directory in which Tcl's platform-independent files are
 # installed.
-TCL_PREFIX='/home/wiflin/Sirius/pfabric'
+TCL_PREFIX='/home/ubuntu/pfabric_ns2'
 
 # Top-level directory in which Tcl's platform-specific files (e.g.
 # executables) are installed.
-TCL_EXEC_PREFIX='/home/wiflin/Sirius/pfabric'
+TCL_EXEC_PREFIX='/home/ubuntu/pfabric_ns2'
 
 # Flags to pass to cc when compiling the components of a shared library:
 TCL_SHLIB_CFLAGS='-fPIC'
@@ -111,15 +111,15 @@ TCL_LIB_FLAG='-ltcl8.4${TCL_DBGX}'
 
 # String to pass to linker to pick up the Tcl library from its
 # build directory.
-TCL_BUILD_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/tcl8.4.18/unix -ltcl8.4${TCL_DBGX}'
+TCL_BUILD_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/tcl8.4.18/unix -ltcl8.4${TCL_DBGX}'
 
 # String to pass to linker to pick up the Tcl library from its
 # installed directory.
-TCL_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/lib -ltcl8.4${TCL_DBGX}'
+TCL_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/lib -ltcl8.4${TCL_DBGX}'
 
 # String to pass to the compiler so that an extension can
 # find installed Tcl headers.
-TCL_INCLUDE_SPEC='-I/home/wiflin/Sirius/pfabric/include'
+TCL_INCLUDE_SPEC='-I/home/ubuntu/pfabric_ns2/include'
 
 # Indicates whether a version numbers should be used in -l switches
 # ("ok" means it's safe to use switches like -ltcl7.5;  "nodots" means
@@ -146,12 +146,12 @@ TCL_UNSHARED_LIB_SUFFIX='${VERSION}${DBGX}.a'
 # different place than the directory containing the source files, this
 # points to the location of the sources, not the location where Tcl was
 # compiled.
-TCL_SRC_DIR='/home/wiflin/Sirius/pfabric/tcl8.4.18'
+TCL_SRC_DIR='/home/ubuntu/pfabric_ns2/tcl8.4.18'
 
 # List of standard directories in which to look for packages during
 # "package require" commands.  Contains the "prefix" directory plus also
 # the "exec_prefix" directory, if it is different.
-TCL_PACKAGE_PATH='/home/wiflin/Sirius/pfabric/lib '
+TCL_PACKAGE_PATH='/home/ubuntu/pfabric_ns2/lib '
 
 # Tcl supports stub.
 TCL_SUPPORTS_STUBS=1
@@ -164,17 +164,17 @@ TCL_STUB_LIB_FLAG='-ltclstub8.4${TCL_DBGX}'
 
 # String to pass to linker to pick up the Tcl stub library from its
 # build directory.
-TCL_BUILD_STUB_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/tcl8.4.18/unix -ltclstub8.4${TCL_DBGX}'
+TCL_BUILD_STUB_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/tcl8.4.18/unix -ltclstub8.4${TCL_DBGX}'
 
 # String to pass to linker to pick up the Tcl stub library from its
 # installed directory.
-TCL_STUB_LIB_SPEC='-L/home/wiflin/Sirius/pfabric/lib -ltclstub8.4${TCL_DBGX}'
+TCL_STUB_LIB_SPEC='-L/home/ubuntu/pfabric_ns2/lib -ltclstub8.4${TCL_DBGX}'
 
 # Path to the Tcl stub library in the build directory.
-TCL_BUILD_STUB_LIB_PATH='/home/wiflin/Sirius/pfabric/tcl8.4.18/unix/libtclstub8.4${TCL_DBGX}.a'
+TCL_BUILD_STUB_LIB_PATH='/home/ubuntu/pfabric_ns2/tcl8.4.18/unix/libtclstub8.4${TCL_DBGX}.a'
 
 # Path to the Tcl stub library in the install directory.
-TCL_STUB_LIB_PATH='/home/wiflin/Sirius/pfabric/lib/libtclstub8.4${TCL_DBGX}.a'
+TCL_STUB_LIB_PATH='/home/ubuntu/pfabric_ns2/lib/libtclstub8.4${TCL_DBGX}.a'
 
 # Flag, 1: we built Tcl with threads enables, 0 we didn't
 TCL_THREADS=0
