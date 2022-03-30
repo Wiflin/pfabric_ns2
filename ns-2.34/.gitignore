@@ -2,6 +2,7 @@ common/ptypes2tcl
 config.log
 config.status
 gen/
+autom4te.cache
 indep-utils/cmu-scen-gen/setdest/Makefile
 indep-utils/cmu-scen-gen/setdest/calcdest
 indep-utils/cmu-scen-gen/setdest/setdest
