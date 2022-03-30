@@ -1,7 +1,10 @@
 *.o
+*.a
+*.la
+*.so
+*.so.*
 tclcl
 otcl
 bin/
 include/
-lib/
 share/
