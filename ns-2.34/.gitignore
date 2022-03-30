@@ -1,6 +1,3 @@
-*.in
-Makefile
-autoconf.h
 common/ptypes2tcl
 config.log
 config.status
