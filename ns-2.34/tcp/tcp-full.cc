@@ -47,7 +47,7 @@ static const char rcsid[] =
 #include "random.h"
 #include "template.h"
 #include "math.h"
-
+#include "iostream"
 #ifndef TRUE
 #define	TRUE 	1
 #endif
@@ -55,6 +55,8 @@ static const char rcsid[] =
 #ifndef FALSE
 #define	FALSE 	0
 #endif
+
+using namespace std;
 
 /*
  * Tcl Linkage for the following:
@@ -329,7 +331,10 @@ FullTcpAgent::advanceby(int np)
 void
 FullTcpAgent::advance_bytes(int nb)
 {
-
+	// std::cout << "[advance] " 
+	// 		  << " time: " <<  now() 
+	// 		  << " bytes:" << nb 
+	// 		  << std::endl;
 ////Shuang: hardcode
 	cwnd_ = initial_window();
 //	//ssthresh_ = cwnd_;

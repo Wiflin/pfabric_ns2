@@ -23,7 +23,7 @@ set logbase "./"
 set sim_end [lindex $argv 0]
 set link_rate [lindex $argv 1]
 set mean_link_delay [lindex $argv 2]
-set host_delay [lindex $argv 3]; # unused,
+set wnd_init [lindex $argv 3]; # unused,
 set queueSize [lindex $argv 4]
 set load [lindex $argv 5]
 set connections_per_pair [lindex $argv 6]
@@ -96,7 +96,7 @@ Agent/TCP set packetSize_ $pktSize
 Agent/TCP/FullTcp set segsize_ $pktSize
 Agent/TCP/FullTcp set spa_thresh_ 0
 Agent/TCP set window_ 64;           # 1bdp?
-Agent/TCP set windowInit_ 2;        # slow start, do not care init_cwnd
+Agent/TCP set windowInit_ $wnd_init;        # slow start, do not care init_cwnd
 Agent/TCP set slow_start_restart_ $slowstartrestart
 Agent/TCP set windowOption_ 0
 Agent/TCP set tcpTick_ 0.000001
@@ -125,7 +125,7 @@ if {[string compare $sourceAlg "DCTCP-Sack"] == 0} {
 Agent/TCP/FullTcp set prio_scheme_ $prio_scheme_;
 Agent/TCP/FullTcp set dynamic_dupack_ 1000000; #disable dupack
 Agent/TCP set window_ 1000000
-Agent/TCP set windowInit_ 12
+Agent/TCP set windowInit_ $wnd_init
 Agent/TCP set rtxcur_init_ $min_rto;
 Agent/TCP/FullTcp/Sack set clear_on_timeout_ false;
 #Agent/TCP/FullTcp set pipectrl_ true;

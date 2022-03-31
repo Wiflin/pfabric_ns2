@@ -808,6 +808,9 @@ Agent_Aggr_pair instproc add_message {size t_start} {
 	incr nr_pairs
 
     global ns
+    if {$size == 1} {
+        set size 1 ; # fix strange bug, avoid message with only 1 byte
+    }
     $ns at $t_start "$apair($i) start $size"
 
 }

@@ -28,11 +28,11 @@ $cur_topology_x 1
 $enableNAM 0
 
 ################ 100G PARAM #####################
-$sim_end  500000
-$cap  10 # link_rate
-$link_delay 0.000000250 # mean_link_delay
-$host_delay 0.0000005  # host_delay, disabled!
-$cur_queueSize 13 # 3BDP
+$sim_end  500000 # disabled
+$cap  100 # link_rate
+$link_delay 0.000001 # mean_link_delay
+$wnd_init 12  # 1BDP host_delay, disabled!
+$cur_queueSize 300 # 3BDP
 $cur_load (0.1, 0.45, 0.5, 0.6, 0.7, 0.75, 0.8)
 $connections_per_pair 10
 $meanFlowSize 1745 * 1460 # disable
