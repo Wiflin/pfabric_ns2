@@ -38,7 +38,7 @@ CPP	= g++
 LINK	= $(CPP)
 LINK_SHLIB = gcc -shared
 MKDEP	= ./conf/mkdep
-TCLSH	= /home/ubuntu/Sirius/pfabric/bin/tclsh8.4
+TCLSH	= /home/wiflin/Sirius/pfabric/bin/tclsh8.4
 TCL2C	= ../tclcl-1.19/tcl2c++
 AR	= ar rc $(BLANK)
 
@@ -64,7 +64,7 @@ DEFINE	= -DTCP_DELAY_BIND_ALL -DNO_TK -DTCLCL_CLASSINSTVAR  -DNDEBUG -DLINUX_TCP
 INCLUDES = \
 	-I.  \
 	-I. \
-	-I/home/ubuntu/Sirius/pfabric/tclcl-1.19 -I/home/ubuntu/Sirius/pfabric/otcl-1.13 -I/home/ubuntu/Sirius/pfabric/include -I/home/ubuntu/Sirius/pfabric/include -I/home/ubuntu/Sirius/pfabric/include -I/usr/include/pcap \
+	-I/home/wiflin/Sirius/pfabric/tclcl-1.19 -I/home/wiflin/Sirius/pfabric/otcl-1.13 -I/home/wiflin/Sirius/pfabric/include -I/home/wiflin/Sirius/pfabric/include -I/home/wiflin/Sirius/pfabric/include -I/usr/include/pcap \
 	-I./tcp -I./sctp -I./common -I./link -I./queue \
 	-I./adc -I./apps -I./mac -I./mobile -I./trace \
 	-I./routing -I./tools -I./classifier -I./mcast \
@@ -76,9 +76,9 @@ INCLUDES = \
 
 
 LIB	= \
-	-L/home/ubuntu/Sirius/pfabric/tclcl-1.19 -ltclcl -L/home/ubuntu/Sirius/pfabric/otcl-1.13 -lotcl -L/home/ubuntu/Sirius/pfabric/lib -ltk8.4 -L/home/ubuntu/Sirius/pfabric/lib -ltcl8.4 \
+	-L/home/wiflin/Sirius/pfabric/tclcl-1.19 -ltclcl -L/home/wiflin/Sirius/pfabric/otcl-1.13 -lotcl -L/home/wiflin/Sirius/pfabric/lib -ltk8.4 -L/home/wiflin/Sirius/pfabric/lib -ltcl8.4 \
 	-lXext -lX11 \
-	 -lnsl -ldl \
+	 -lnsl -lpcap -ldl \
 	-lm -lm 
 #	-L${exec_prefix}/lib \
 
@@ -382,7 +382,7 @@ SUBDIRS=\
 	indep-utils/webtrace-conv/nlanr \
 	indep-utils/webtrace-conv/ucb
 
-BUILD_NSE = 
+BUILD_NSE = nse
 
 all: $(NS) $(BUILD_NSE) $(NSTK) all-recursive Makefile
 

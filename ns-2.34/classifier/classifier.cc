@@ -37,10 +37,13 @@ static const char rcsid[] =
     "@(#) $Header: /cvsroot/nsnam/ns-2/classifier/classifier.cc,v 1.43 2008/11/03 05:34:48 tom_henderson Exp $";
 #endif
 
+#include <iostream>
 #include <stdlib.h>
 #include "config.h"
 #include "classifier.h"
 #include "packet.h"
+#include "ip.h"
+#include "tcp.h"
 
 static class ClassifierClass : public TclClass {
 public:
@@ -52,7 +55,7 @@ public:
 
 
 Classifier::Classifier() : 
-	slot_(0), nslot_(0), maxslot_(-1), shift_(0), mask_(0xffffffff), nsize_(0)
+	slot_(0), nslot_(0), maxslot_(-1), shift_(0), mask_(0xffffffff), nsize_(0), nodeid_(-1), nrecv_(0)
 {
 	default_target_ = 0;
 
@@ -150,6 +153,26 @@ void Classifier::recv(Packet* p, Handler*h)
 		Packet::free(p);
 		return;
 	}
+
+	hdr_cmn *cmn = hdr_cmn::access(p);
+	hdr_ip *ip = hdr_ip::access(p);
+	hdr_tcp *tcph = hdr_tcp::access(p);
+	int datalen = cmn->size() - tcph->hlen(); // # payload bytes
+
+	// std::cout << "[classifier recv]"
+	// 		<< " " << int(Scheduler::instance().clock() * 1000000000)
+	// 		<< " " << name()
+	// 		<< " pkt size " << p->datalen()
+	// 		<< " cmn size " << cmn->size()
+	// 		<< " src " << ip->src_.addr_
+	// 		<< " dst " << ip->dst_.addr_
+	// 		<< std::endl; 
+
+	if (ip->dst_.addr_ == nodeid_ && datalen > 0) {
+		nrecv_ += cmn->size();
+	}
+
+
 	node->recv(p,h);
 }
 
@@ -197,7 +220,19 @@ int Classifier::command(int argc, const char*const* argv)
                                 tcl.result(default_target_->name());
                         return (TCL_OK);
                 }
+				if (strcmp(argv[1], "rxcounter") == 0) {
+						tcl.resultf("%u",nrecv_);
+                        return (TCL_OK);
+                }
         } else if (argc == 3) {
+		/*
+		 * $classifier alloc-port nullagent
+		 */
+		if (strcmp(argv[1],"set-nodeid") == 0) {
+			int id = atoi(argv[2]);
+			nodeid_ = id;
+			return(TCL_OK);
+		}
 		/*
 		 * $classifier alloc-port nullagent
 		 */

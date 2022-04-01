@@ -87,6 +87,8 @@ protected:
 	int mask_;
 	NsObject *default_target_;
 	int nsize_;       //what size of nslot_ should be
+	int nodeid_;
+	unsigned int nrecv_;
 };
 
 #endif

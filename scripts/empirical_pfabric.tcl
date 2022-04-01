@@ -194,6 +194,7 @@ set UCap [expr $link_rate * $topology_spt / $topology_spines / $topology_x] ; #u
 
 for {set i 0} {$i < $S} {incr i} {
     set s($i) [$ns node]
+    $s($i) set recv_counter 0
 }
 
 for {set i 0} {$i < $topology_tors} {incr i} {
@@ -236,10 +237,11 @@ for {set i 0} {$i < $topology_tors} {incr i} {
     }
 }
 
-# for {set i 0} {$i < $S} {incr i} {
-#     puts [[$s($i) entry] info class]
-# }
-# exit 
+for {set i 0} {$i < $S} {incr i} {
+    set cls [$s($i) entry]
+    $cls set-nodeid $i
+    # puts "$i [$s($i) entry] [[$s($i) entry] info class] "
+}
 
 
 #############  Agents          #########################
@@ -261,6 +263,44 @@ proc printNumActive {} {
     if {$flow_gen < $sim_end} {
         $ns at $tRecNext "printNumActive"
     }
+}
+
+set thputlog [open "${logbase}throughput.log" w]
+set thputsumlog [open "${logbase}throughput-summary.log" w]
+set thputfirst 1
+proc printNodeRecvSpeed {} {
+    global ns S s thputlog thputsumlog thputfirst
+    set tNow [$ns now]
+    set interval 0.000002
+    set thputsum 0
+    # puts "$tNow printNodeRecvSpeed $S"
+    set ratestr "[expr ceil ($tNow*1000000000)]"
+
+    if {$thputfirst == 1} {
+        for {set i 0} {$i < $S} {incr i} {
+            set cls [$s($i) entry]
+            $s($i) set recv_counter [$cls rxcounter]
+            set thputfirst 0
+        }
+    }
+    for {set i 0} {$i < $S} {incr i} {
+        set cls [$s($i) entry]
+        set counter [$cls rxcounter]
+
+        set last [$s($i) set recv_counter]
+        $s($i) set recv_counter $counter
+
+        set rate [expr ($counter-$last)*8/$interval]
+        set thputsum [expr $thputsum+$rate]
+        # puts "$i $rate"
+        set ratestr "$ratestr $rate"
+        # puts "$i [$s($i) entry] [[$s($i) entry] info class] "
+    }
+    puts $thputlog "$ratestr"
+    puts $thputsumlog "[expr ceil ($tNow*1000000000)] $thputsum"
+
+    set tRecNext [expr $tNow+$interval]
+    $ns at $tRecNext "printNodeRecvSpeed"
 }
 
 
@@ -289,6 +329,7 @@ for {set j 0} {$j < $S } {incr j} {
 generate_flow_from_file $flowtrace
 
 $ns at 2 "printNumActive"
+$ns at 2 "printNodeRecvSpeed"
 puts "Initial agent creation done";flush stdout
 puts "Simulation started!"
 
