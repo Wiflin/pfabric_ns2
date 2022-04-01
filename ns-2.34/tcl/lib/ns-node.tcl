@@ -500,6 +500,7 @@ Node instproc attach { agent { port "" } } {
 	#
 	if { $dmux_ == "" } {
 		# Use the default mask_ and port_ values
+		# singleton instance, record throughput here!
 		set dmux_ [new Classifier/Port]
 		# point the node's routing entry to itself
 		# at the port demuxer (if there is one)

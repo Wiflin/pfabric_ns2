@@ -193,7 +193,7 @@ SimpleLink instproc init { src dst bw delay q {lltype "DelayLink"} } {
 	$link_ set bandwidth_ $bw
 	$link_ set delay_ $delay
 	$queue_ target $link_
-	$link_ target [$dst entry]
+	$link_ target [$dst entry]	; # agent->send(p) ===> [dst entry]->recv(p)
 	$queue_ drop-target $drophead_
 
 	# XXX

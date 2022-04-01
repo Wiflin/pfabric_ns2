@@ -236,6 +236,12 @@ for {set i 0} {$i < $topology_tors} {incr i} {
     }
 }
 
+# for {set i 0} {$i < $S} {incr i} {
+#     puts [[$s($i) entry] info class]
+# }
+# exit 
+
+
 #############  Agents          #########################
 set lambda [expr ($link_rate*$load*1000000000)/($meanFlowSize*8.0/2547262*2686844)] ; # 1/2547262*2686844 = 1.05 
 puts "Arrival: Poisson with inter-arrival [expr 1/$lambda * 1000] ms"
