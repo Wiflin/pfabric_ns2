@@ -850,10 +850,7 @@ proc generate_flow_from_file { input_file } {
     set flow_idx 0
     while {$flow_idx < $flow_num} { 
         set line [gets $fp];
-        if {[eof $fp]} {
-            close $fp;
-            break;
-        }
+
 
         regsub -all {[[:blank:]]+} $line " " line
         set line_raw  [split $line ];
@@ -867,5 +864,10 @@ proc generate_flow_from_file { input_file } {
         $agtagr($src,$dst) add_message $size $t_start
 
         incr flow_idx
+
+        if {[eof $fp]} {
+            close $fp;
+            break;
+        }
     }
 }
