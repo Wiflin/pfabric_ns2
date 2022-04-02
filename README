@@ -68,7 +68,7 @@ installation of ns-2.34 on Debian Jessie:
 
 
 Install required libraries for ns2 using terminal
-            sudo apt-get install build-essential autoconf automake libxmu-dev
+            sudo apt-get install build-essential autoconf automake libxmu-dev  gcc g++ make libxt-dev 
  Then, sudo ./install
 
 ################################################################################
