@@ -27,6 +27,8 @@ yum install libX11-devel* xorg-x11-proto-devel* libXt-devel* libXmu-devel* -y
 ```
 echo export TCL_LIBRARY=/data/home/wikkizhang/spaces/pfabric_ns2/tcl8.4.18/library >>~/.bashrc 
 echo export LD_LIBRARY_PATH=/data/home/wikkizhang/spaces/pfabric_ns2/otcl-1.13:/data/home/wikkizhang/spaces/pfabric_ns2/lib >>~/.bashrc 
+echo export PATH=\$PATH:/data/home/wikkizhang/spaces/pfabric_ns2/ns-2.34 >>~/.bashrc 
+source ~/.bashrc 
 ```
 
 ################################################################################
