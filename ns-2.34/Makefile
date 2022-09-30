@@ -38,7 +38,7 @@ CPP	= g++
 LINK	= $(CPP)
 LINK_SHLIB = gcc -shared
 MKDEP	= ./conf/mkdep
-TCLSH	= /home/wiflin/Sirius/pfabric/bin/tclsh8.4
+TCLSH	= /data/home/wikkizhang/spaces/pfabric_ns2/bin/tclsh8.4
 TCL2C	= ../tclcl-1.19/tcl2c++
 AR	= ar rc $(BLANK)
 
@@ -53,7 +53,7 @@ PERL	= /usr/bin/perl
 # for diffusion
 #DIFF_INCLUDES = "./diffusion3/main ./diffusion3/lib ./diffusion3/nr ./diffusion3/ns"
 
-CCOPT	=  -Wall -Wno-write-strings -funsigned-char
+CCOPT	= -O2 -Wall -Wno-write-strings -funsigned-char
 STATIC	= 
 #LDFLAGS	= $(STATIC)
 LDFLAGS	=  -Wl,-export-dynamic 
@@ -64,7 +64,7 @@ DEFINE	= -DTCP_DELAY_BIND_ALL -DNO_TK -DTCLCL_CLASSINSTVAR  -DNDEBUG -DLINUX_TCP
 INCLUDES = \
 	-I.  \
 	-I. \
-	-I/home/wiflin/Sirius/pfabric/tclcl-1.19 -I/home/wiflin/Sirius/pfabric/otcl-1.13 -I/home/wiflin/Sirius/pfabric/include -I/home/wiflin/Sirius/pfabric/include -I/home/wiflin/Sirius/pfabric/include -I/usr/include/pcap \
+	-I/data/home/wikkizhang/spaces/pfabric_ns2/tclcl-1.19 -I/data/home/wikkizhang/spaces/pfabric_ns2/otcl-1.13 -I/data/home/wikkizhang/spaces/pfabric_ns2/include -I/data/home/wikkizhang/spaces/pfabric_ns2/include -I/data/home/wikkizhang/spaces/pfabric_ns2/include -I/usr/include/pcap \
 	-I./tcp -I./sctp -I./common -I./link -I./queue \
 	-I./adc -I./apps -I./mac -I./mobile -I./trace \
 	-I./routing -I./tools -I./classifier -I./mcast \
@@ -76,7 +76,7 @@ INCLUDES = \
 
 
 LIB	= \
-	-L/home/wiflin/Sirius/pfabric/tclcl-1.19 -ltclcl -L/home/wiflin/Sirius/pfabric/otcl-1.13 -lotcl -L/home/wiflin/Sirius/pfabric/lib -ltk8.4 -L/home/wiflin/Sirius/pfabric/lib -ltcl8.4 \
+	-L/data/home/wikkizhang/spaces/pfabric_ns2/tclcl-1.19 -ltclcl -L/data/home/wikkizhang/spaces/pfabric_ns2/otcl-1.13 -lotcl -L/data/home/wikkizhang/spaces/pfabric_ns2/lib -ltk8.4 -L/data/home/wikkizhang/spaces/pfabric_ns2/lib -ltcl8.4 \
 	-lXext -lX11 \
 	 -lnsl -lpcap -ldl \
 	-lm -lm 
@@ -256,6 +256,7 @@ OBJ_CC = \
 	mac/arp.o mobile/god.o mobile/dem.o \
 	mobile/topography.o mobile/modulation.o \
 	queue/priqueue.o queue/dsr-priqueue.o \
+	queue/priority.o \
 	mac/phy.o mac/wired-phy.o mac/wireless-phy.o \
 	mac/wireless-phyExt.o \
 	mac/mac-timers.o trace/cmu-trace.o mac/varp.o \

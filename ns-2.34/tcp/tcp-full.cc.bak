@@ -47,7 +47,7 @@ static const char rcsid[] =
 #include "random.h"
 #include "template.h"
 #include "math.h"
-
+#include "iostream"
 #ifndef TRUE
 #define	TRUE 	1
 #endif
@@ -55,6 +55,8 @@ static const char rcsid[] =
 #ifndef FALSE
 #define	FALSE 	0
 #endif
+
+using namespace std;
 
 /*
  * Tcl Linkage for the following:
@@ -161,17 +163,6 @@ FullTcpAgent::delay_bind_init_all()
 	delay_bind_init_one("deadline"); //Shuang
 	delay_bind_init_one("early_terminated_"); //Shuang
 
-    delay_bind_init_one("enable_pias_"); //wei
-    delay_bind_init_one("pias_prio_num_"); //wei
-    delay_bind_init_one("pias_thresh_0"); //wei
-    delay_bind_init_one("pias_thresh_1"); //wei
-    delay_bind_init_one("pias_thresh_2"); //wei
-    delay_bind_init_one("pias_thresh_3"); //wei
-    delay_bind_init_one("pias_thresh_4"); //wei
-    delay_bind_init_one("pias_thresh_5"); //wei
-    delay_bind_init_one("pias_thresh_6"); //wei
-    delay_bind_init_one("pias_debug_"); //wei
-
 	TcpAgent::delay_bind_init_all();
 
       	reset();
@@ -215,18 +206,6 @@ FullTcpAgent::delay_bind_dispatch(const char *varName, const char *localName, Tc
 	if (delay_bind(varName, localName, "prob_cap_", &prob_cap_, tracer)) return TCL_OK; //Shuang
 	if (delay_bind(varName, localName, "deadline", &deadline, tracer)) return TCL_OK; //Shuang
 	if (delay_bind(varName, localName, "early_terminated_", &early_terminated_, tracer)) return TCL_OK; //Shuang
-
-    if (delay_bind_bool(varName, localName, "enable_pias_", &enable_pias_, tracer)) return TCL_OK; //wei
-    if (delay_bind(varName, localName, "pias_prio_num_", &pias_prio_num_, tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_0", &pias_thresh_[0], tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_1", &pias_thresh_[1], tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_2", &pias_thresh_[2], tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_3", &pias_thresh_[3], tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_4", &pias_thresh_[4], tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_5", &pias_thresh_[5], tracer)) return TCL_OK;
-    if (delay_bind(varName, localName, "pias_thresh_6", &pias_thresh_[6], tracer)) return TCL_OK;
-    if (delay_bind_bool(varName, localName, "pias_debug_", &pias_debug_, tracer)) return TCL_OK;
-
         return TcpAgent::delay_bind_dispatch(varName, localName, tracer);
 }
 
@@ -352,7 +331,10 @@ FullTcpAgent::advanceby(int np)
 void
 FullTcpAgent::advance_bytes(int nb)
 {
-
+	// std::cout << "[advance] " 
+	// 		  << " time: " <<  now() 
+	// 		  << " bytes:" << nb 
+	// 		  << std::endl;
 ////Shuang: hardcode
 	cwnd_ = initial_window();
 //	//ssthresh_ = cwnd_;
@@ -393,8 +375,6 @@ FullTcpAgent::advance_bytes(int nb)
 		         now(), name(), statestr(state_));
 
 	}
-
-    ndatabytes_=0; //Reset number of data bytes sent back to 0
 
 	if (state_ == TCPS_ESTABLISHED)
 		send_much(0, REASON_NORMAL, maxburst_);
@@ -847,7 +827,7 @@ FullTcpAgent::ack_action(Packet* p)
 
 int
 FullTcpAgent::set_prio(int seq, int maxseq) {
-	int max = 100 * 1460;
+	int max = 100 * size_;
 	int prio;
 	if (prio_scheme_ == 0) {
 		if ( seq - startseq_ > max)
@@ -856,11 +836,11 @@ FullTcpAgent::set_prio(int seq, int maxseq) {
 			prio = seq - startseq_;
 	}
 	if (prio_scheme_ == 1)
-		prio =  maxseq - startseq_;
+		prio =  maxseq - startseq_;		// static priority
 	if (prio_scheme_ == 2)
-		prio =  maxseq - seq;
+		prio =  maxseq - seq;			// linear priority based on remaining 
 	if (prio_scheme_ == 3)
-		prio = seq - startseq_;
+		prio = seq - startseq_;			// linear priority based on already sent 
 
 	if (prio_num_ == 0)
 		return prio;
@@ -883,24 +863,6 @@ FullTcpAgent::calPrio(int prio) {
 
 	//printf("prio %d cap %d ans %d\n", prio, prio_cap_[8/prio_num_ - 1], prio_num_ - 1);
 	return prio_num_ - 1;
-}
-
-int FullTcpAgent::piasPrio(int bytes_sent)
-{
-    if(enable_pias_&&pias_prio_num_>=1)
-    {
-        pias_prio_num_=min(pias_prio_num_,8); //no more than 8 priorities now
-        for(int i=0; i<pias_prio_num_-1; i++) //there are pias_prio_num-1 demotion thresholds in total
-        {
-            if(bytes_sent<=pias_thresh_[i])
-                return i;
-        }
-        return pias_prio_num_-1;    //lowest priority by default
-    }
-    else
-    {
-        return 0;
-    }
 }
 
 /*
@@ -1026,7 +988,7 @@ FullTcpAgent::sendpacket(int seqno, int ackno, int pflags, int datalen, int reas
 				iph->prio_type() = 0;
 				iph->prio() = (1 << 30);
 			} else {
-//				iph->prio() = iph->prio() / 40 * 1000 + set_prio(seqno, curseq_) / 1460;
+//				iph->prio() = iph->prio() / 40 * 1000 + set_prio(seqno, curseq_) / size_;
 			}
 		}
 
@@ -1050,21 +1012,6 @@ FullTcpAgent::sendpacket(int seqno, int ackno, int pflags, int datalen, int reas
 		informpacer = 0;
 		//abd
 	}
-
-    /* PIAS packet tagging */
-    if(enable_pias_)
-    {
-        if(datalen>0)
-        {
-            iph->prio()=piasPrio(seqno-startseq_);
-            if(pias_debug_)
-                printf("Packet prio is %d when bytes sent is %d\n", iph->prio(),seqno-startseq_);
-        }
-        else
-        {
-            iph->prio()=0;
-        }
-    }
 
 	send(p, 0);
 
@@ -1937,6 +1884,7 @@ FullTcpAgent::recv(Packet *pkt, Handler*)
 			if (flow_remaining_ == 0) {
 			        flags_ |= TF_ACKNOW;
 				flow_remaining_ = -1;
+	            Tcl::instance().evalf("%s done_data", this->name());
 			}
 			//printf("flow_remaining after dec = %d\n" , flow_remaining_);
 
@@ -2785,6 +2733,7 @@ step6:
 				if (flow_remaining_ == 0) {
 				      flags_ |= TF_ACKNOW;
 				      flow_remaining_ = -1;
+	                  Tcl::instance().evalf("%s done_data", this->name());
 				}
 				//printf("flow_remaining after dec = %d\n" , flow_remaining_);
        			}
@@ -2812,11 +2761,12 @@ step6:
 
 				//printf("flow_remaining before dec = %d\n" , flow_remaining_);
 				if (flow_remaining_ > 0)
-				       flow_remaining_ -= datalen; // Mohammad
+				       flow_remaining_ -= (rcv_nxt_ - rcv_nxt_old_); // Mohammad
 
 				if (flow_remaining_ == 0) {
 				       flags_ |= TF_ACKNOW;
 				       flow_remaining_ = -1;
+	                   Tcl::instance().evalf("%s done_data", this->name());
 				}
 
 				//printf("flow_remaining after dec = %d\n" , flow_remaining_);
@@ -3247,7 +3197,7 @@ NewRenoFullTcpAgent::ack_action(Packet* p)
 
 int
 SackFullTcpAgent::set_prio(int seq, int maxseq) {
-	int max = 100 * 1460;
+	int max = 100 * size_;
 	int prio;
 	if (prio_scheme_ == 0) {
 		if ( seq - startseq_ > max)
@@ -3445,9 +3395,9 @@ SackFullTcpAgent::timeout_action()
 	/*recover_ = maxseq_;
 
 	int progress = curseq_ - int(highest_ack_) - sq_.total();
-	cwnd_ = min((last_timeout_progress_ - progress) / 1460 + 1, maxcwnd_);
+	cwnd_ = min((last_timeout_progress_ - progress) / size_ + 1, maxcwnd_);
 	ssthresh_ = cwnd_;
-	printf("%d %d", progress/1460, last_timeout_progress_ / 1460);
+	printf("%d %d", progress/size_, last_timeout_progress_ / size_);
 	last_timeout_progress_ = progress;
 
 	reset_rtx_timer(1);
