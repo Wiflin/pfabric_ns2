@@ -21,9 +21,9 @@ host_delay = 0.000020
 queueSize = 240
 load_arr = [0.9, 0.8, 0.7, 0.6, 0.5]
 connections_per_pair = 1
-meanFlowSize = 1138*1460
+meanFlowSize = 1138*1460			# mean size
 paretoShape = 1.05
-flow_cdf = 'CDF_dctcp.tcl'
+flow_cdf = 'CDF_dctcp.tcl'			# CDF Trace
 
 enableMultiPath = 1
 perflowMP = 0
@@ -59,7 +59,7 @@ topology_spines = 4
 topology_x = 1
 
 ns_path = 'ns'
-sim_script = 'spine_empirical.tcl'
+sim_script = 'spine_empirical.tcl'		# ns2 script
 
 for prio_num_ in prio_num_arr:
 	for i in range(len(load_arr)):
