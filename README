@@ -31,6 +31,17 @@ echo export PATH=\$PATH:/data/home/wikkizhang/spaces/pfabric_ns2/ns-2.34 >>~/.ba
 source ~/.bashrc 
 ```
 
+4. 更新makefile
+----------------
+  cd ns-2.34
+  vim Makefile
+  编译依赖里增加下面这一行
+	queue/priority.o \
+
+5. 追加编译
+----------------
+  make
+
 ################################################################################
 RAW README BELOW
 ################################################################################
